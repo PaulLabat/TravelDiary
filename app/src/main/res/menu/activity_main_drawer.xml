@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/nav_timeline"
+            android:icon="@drawable/ic_book_black_18dp"
+            android:title="Timeline" />
+        <item android:id="@+id/nav_calendar"
+            android:icon="@drawable/ic_event_black_18dp"
+            android:title="Calendrer" />
+        <item android:id="@+id/nav_gallery"
+            android:icon="@drawable/ic_crop_original_black_18dp"
+            android:title="Galerie" />
+        <item android:id="@+id/nav_map"
+            android:icon="@drawable/ic_map_black_18dp"
+            android:title="Carte" />
+        <item android:id="@+id/nav_preferences"
+            android:icon="@drawable/ic_settings_black_18dp"
+            android:title="Préférences" />
+        <item android:id="@+id/nav_sync"
+            android:icon="@drawable/ic_autorenew_black_18dp"
+            android:title="Synch" />
+    </group>
+
+</menu>
