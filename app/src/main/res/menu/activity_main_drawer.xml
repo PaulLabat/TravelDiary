@@ -7,7 +7,7 @@
             android:title="Timeline" />
         <item android:id="@+id/nav_calendar"
             android:icon="@drawable/ic_event_black_18dp"
-            android:title="Calendrer" />
+            android:title="Calendrier" />
         <item android:id="@+id/nav_gallery"
             android:icon="@drawable/ic_crop_original_black_18dp"
             android:title="Galerie" />
@@ -19,7 +19,7 @@
             android:title="Préférences" />
         <item android:id="@+id/nav_sync"
             android:icon="@drawable/ic_autorenew_black_18dp"
-            android:title="Synch" />
+            android:title="Sync" />
     </group>
 
 </menu>
