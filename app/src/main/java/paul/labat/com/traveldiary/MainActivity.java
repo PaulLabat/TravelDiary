@@ -16,12 +16,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import paul.labat.com.traveldiary.Timeline.TimelineAdapter;
+import paul.labat.com.traveldiary.Timeline.TimelineFragment;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private RecyclerView mRecyclerView;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private RecyclerView.Adapter mAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +48,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        mRecyclerView = (RecyclerView)findViewById(R.id.view_timeline);
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new TimelineAdapter();
-        mRecyclerView.setAdapter(mAdapter);
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_content, new TimelineFragment()).commit();
 
 
 
