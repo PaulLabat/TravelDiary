@@ -2,27 +2,27 @@ package paul.labat.com.traveldiary.Timeline;
 
 
 import android.content.Context;
-import android.support.design.widget.Snackbar;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -34,10 +34,11 @@ import paul.labat.com.traveldiary.R;
 public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHolder> {
 
     private List<TimelineItem> entries;
-
+    Context context;
 
     public TimelineAdapter(Context context){
         super();
+        this.context = context;
         entries = new ArrayList<>();
         TimelineItem item;
         for(String name : context.fileList()){
@@ -92,20 +93,17 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
                     sdf = new SimpleDateFormat("d");
                     item.setDayNumber(sdf.format(date));
 
+                    Log.d("UUID", dataObject.getString("FileName"));
+                    item.setCardUUID(dataObject.getString("FileName"));
+
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
                 entries.add(item);
-
-
             }
-
-
         }
-
-
-
     }
 
     @Override
@@ -122,6 +120,9 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
         holder.dayString.setText(item.getDayString());
         holder.dayNumber.setText(item.getDayNumber());
         holder.dayHour.setText(item.getDayHour());
+        holder.cardView.setTag(R.string.tag_card_UUID, item.getCardUUID());
+        holder.cardView.setTag(R.string.tag_card_position, position);
+
     }
 
     @Override
@@ -136,15 +137,60 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
         public TextView dayHour;
         public TextView summary;
         public TextView address;
+        public CardView cardView;
 
         public ViewHolder(View itemView) {
             super(itemView);
+            cardView = (CardView)itemView.findViewById(R.id.card_view);
+
+
             dayHour =(TextView)itemView.findViewById(R.id.item_hour);
             dayNumber =(TextView)itemView.findViewById(R.id.item_day_number);
             dayString =(TextView)itemView.findViewById(R.id.item_day_string);
 
             summary = (TextView)itemView.findViewById(R.id.item_summary);
             address = (TextView)itemView.findViewById(R.id.item_address);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d("onClick", v.getTag().toString());
+                }
+            });
+
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(final View v) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+                    builder.setMessage("Suppression du fichier ?")
+                            .setTitle("Suppression");
+
+                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            File dir = context.getFilesDir();
+                            File file = new File(dir, v.getTag(R.string.tag_card_UUID).toString()+".json");
+                            boolean res = file.delete();
+                            Toast.makeText(context, "File deleted : "+res, Toast.LENGTH_SHORT).show();
+                            entries.remove((int)Integer.valueOf(v.getTag(R.string.tag_card_position).toString()));
+                            notifyItemRemoved(Integer.valueOf(v.getTag(R.string.tag_card_position).toString()));
+                        }
+                    });
+
+                    builder.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    builder.create().show();
+
+                    return true;
+                }
+            });
+
 
         }
     }

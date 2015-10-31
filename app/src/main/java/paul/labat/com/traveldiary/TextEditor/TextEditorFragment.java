@@ -3,9 +3,7 @@ package paul.labat.com.traveldiary.TextEditor;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,15 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.FileOutputStream;
 import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.UUID;
-
 import paul.labat.com.traveldiary.R;
 import paul.labat.com.traveldiary.Timeline.TimelineFragment;
 
@@ -55,7 +50,7 @@ public class TextEditorFragment extends Fragment {
         switch (item.getItemId()){
             case R.id.action_save:
                 saveEntry();
-                Snackbar.make(getView(), "Saved", Snackbar.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Saved", Toast.LENGTH_LONG).show();
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_content, new TimelineFragment()).commit();
                 return true;
             case R.id.action_preview:
@@ -84,7 +79,7 @@ public class TextEditorFragment extends Fragment {
         try {
 
             //administrative
-            infosObject.put("fileName", fileName);
+            infosObject.put("FileName", fileName);
             infosObject.put("TimeZone", Calendar.getInstance().getTimeZone());
             infosObject.put("Date", Calendar.getInstance(TimeZone.getDefault()).getTimeInMillis());
 
@@ -108,18 +103,11 @@ public class TextEditorFragment extends Fragment {
             newEntry.put("Location", gpsOjbect);
             newEntry.put("Weather", weatherOjbect);
 
-
             Log.d("TextEditor", newEntry.toString());
-
-
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-
-
-
 
         FileOutputStream outputStream;
 
@@ -129,7 +117,7 @@ public class TextEditorFragment extends Fragment {
             outputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
-            Snackbar.make(getView(), "An error occured while saving the entry", Snackbar.LENGTH_LONG).setAction("Ok", null).show();
+            Toast.makeText(getContext(), "An error occured while saving the entry", Toast.LENGTH_LONG).show();
         }
 
     }

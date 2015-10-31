@@ -9,6 +9,7 @@ public class TimelineItem {
     private String dayString;
     private String summary;
     private String location;
+    private String cardUUID;
 
     public String getDayHour() {
         return dayHour;
@@ -50,4 +51,11 @@ public class TimelineItem {
         this.summary = summary;
     }
 
+    public String getCardUUID() {
+        return cardUUID;
+    }
+
+    public void setCardUUID(String cardUUID) {
+        this.cardUUID = cardUUID;
+    }
 }
