@@ -1,13 +1,32 @@
 package paul.labat.com.traveldiary.Timeline;
 
 
+import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import paul.labat.com.traveldiary.R;
 
@@ -17,28 +36,75 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
     private List<TimelineItem> entries;
 
 
-    public TimelineAdapter(){
+    public TimelineAdapter(Context context){
         super();
         entries = new ArrayList<>();
-        TimelineItem item = new TimelineItem();
-        item.setLocation("12 rue du vercor");
-        item.setDayHour("11:20");
-        item.setDayNumber("22");
-        item.setDayString("mer");
-        item.setSummary("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
+        TimelineItem item;
+        for(String name : context.fileList()){
+            Log.d("TextEditor", "open file : "+name);
+            item = new TimelineItem();
+            FileInputStream inputStream;
+            String tmp="";
 
-        entries.add(item);
+            try {
+                inputStream = context.openFileInput(name);
+                BufferedReader br = new BufferedReader(new InputStreamReader(inputStream,"utf8"));
+                String str;
+                while ((str = br.readLine()) != null) {
+                    tmp += str;
+                }
+                inputStream.close();
+            }catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            JSONObject jsonObject;
+            try {
+                jsonObject = new JSONObject(tmp);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e(getClass().getName(),"Could not parse json file: "+ name);
+                jsonObject = null;
+            }
+
+            if(jsonObject != null){
+
+                try {
+                    JSONObject dataObject = jsonObject.getJSONObject("Data");
+                    item.setSummary(dataObject.getString("Text"));
+
+                    dataObject = jsonObject.getJSONObject("System");
+
+                    Timestamp timeStamp = new Timestamp(dataObject.getLong("Date"));
+                    Date date = new Date(timeStamp.getTime());
+                    SimpleDateFormat sdf;
+
+                    if(TimeZone.getTimeZone(dataObject.getString("TimeZone")).inDaylightTime(date)){
+                        sdf = new SimpleDateFormat("kk:mm");
+                        sdf.setTimeZone(TimeZone.getTimeZone(dataObject.getString("TimeZone")));
+                    }else{
+                        sdf = new SimpleDateFormat("kk:mm", Locale.getDefault());
+                    }
+
+                    item.setDayHour(sdf.format(date));
+                    sdf = new SimpleDateFormat("ccc");
+                    item.setDayString(sdf.format(date));
+                    sdf = new SimpleDateFormat("d");
+                    item.setDayNumber(sdf.format(date));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                entries.add(item);
 
 
+            }
 
-        item = new TimelineItem();
-        item.setLocation("22 avenue des jeux olympiques");
-        item.setDayHour("14:53");
-        item.setDayNumber("11");
-        item.setDayString("jeu");
-        item.setSummary("Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.");
 
-        entries.add(item);
+        }
+
+
 
     }
 

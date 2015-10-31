@@ -24,6 +24,9 @@ import java.io.InputStreamReader;
 import paul.labat.com.traveldiary.R;
 
 public class TextEditorPreviewFragment extends Fragment{
+
+    private String rawString;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -31,41 +34,17 @@ public class TextEditorPreviewFragment extends Fragment{
         setHasOptionsMenu(true);
 
         TextView textView = (TextView)view.findViewById(R.id.markdow_textview);
-        String raw="#Header sizes\n" +
-                "##Smaller header\n" +
-                "###Even smaller header";
+        rawString = getArguments().getString("editText");
 
         AndDown converter = new AndDown();
 
-        String cooked = converter.markdownToHtml(raw);
+        String cooked = converter.markdownToHtml(rawString);
 
         CharSequence cs = Html.fromHtml(cooked);
         textView.setText(cs);
 
         return view;
     }
-
-
-
-    public static String readRawTextFile(Context ctx, int resId) {
-        InputStream inputStream=ctx.getResources().openRawResource(resId);
-        InputStreamReader inputreader=new InputStreamReader(inputStream);
-        BufferedReader buffreader=new BufferedReader(inputreader);
-        String line;
-        StringBuilder text=new StringBuilder();
-
-        try {
-            while ((line=buffreader.readLine())!=null) {
-                text.append(line);
-                text.append('\n');
-            }
-        }
-        catch (IOException e) {
-            return null;
-        }
-        return text.toString();
-    }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -80,7 +59,13 @@ public class TextEditorPreviewFragment extends Fragment{
                 Toast.makeText(getContext(), "save action", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_edit:
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_content, new TextEditorFragment()).commit();
+
+                Bundle bundle = new Bundle();
+                bundle.putString("editText", rawString);
+                Fragment fragment = new TextEditorFragment();
+                fragment.setArguments(bundle);
+
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_content, fragment).commit();
             default:
         }
 

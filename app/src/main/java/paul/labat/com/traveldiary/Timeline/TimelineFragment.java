@@ -27,7 +27,7 @@ public class TimelineFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new TimelineAdapter();
+        mAdapter = new TimelineAdapter(getContext());
         mRecyclerView.setAdapter(mAdapter);
 
         return rootView;

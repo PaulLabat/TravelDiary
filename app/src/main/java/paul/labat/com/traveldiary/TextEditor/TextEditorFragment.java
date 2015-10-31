@@ -1,26 +1,44 @@
 package paul.labat.com.traveldiary.TextEditor;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.FileOutputStream;
+import java.util.Calendar;
+import java.util.TimeZone;
+import java.util.UUID;
+
 import paul.labat.com.traveldiary.R;
+import paul.labat.com.traveldiary.Timeline.TimelineFragment;
 
 public class TextEditorFragment extends Fragment {
+
+    private EditText editText;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.text_editor_layout, container, false);
         setHasOptionsMenu(true);
+        editText = (EditText)view.findViewById(R.id.edit_text_entry);
+        if(getArguments() != null)
+            editText.setText(getArguments().getString("editText"));
 
         return view;
     }
@@ -36,13 +54,85 @@ public class TextEditorFragment extends Fragment {
 
         switch (item.getItemId()){
             case R.id.action_save:
-                Toast.makeText(getContext(),"save action", Toast.LENGTH_SHORT).show();
+                saveEntry();
+                Snackbar.make(getView(), "Saved", Snackbar.LENGTH_LONG).show();
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_content, new TimelineFragment()).commit();
                 return true;
             case R.id.action_preview:
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_content, new TextEditorPreviewFragment()).commit();
+                Fragment fragment = new TextEditorPreviewFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("editText", editText.getText().toString());
+                fragment.setArguments(bundle);
+
+
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_content, fragment).commit();
             default:
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
+    private void saveEntry(){
+        String fileName = UUID.randomUUID().toString();
+
+        JSONObject newEntry = new JSONObject();
+        JSONObject infosObject = new JSONObject();
+        JSONObject textObject = new JSONObject();
+        JSONObject gpsOjbect = new JSONObject();
+        JSONObject weatherOjbect = new JSONObject();
+        try {
+
+            //administrative
+            infosObject.put("fileName", fileName);
+            infosObject.put("TimeZone", Calendar.getInstance().getTimeZone());
+            infosObject.put("Date", Calendar.getInstance(TimeZone.getDefault()).getTimeInMillis());
+
+
+            //Text
+            textObject.put("Text", editText.getText());
+
+
+            //GPS position
+            gpsOjbect.put("Country","France");
+            gpsOjbect.put("City", "Orlean");
+            gpsOjbect.put("Street", "5 Rue du Maréchal de Lattre de Tassigny");
+            gpsOjbect.put("Longitude", 1.8951917);
+            gpsOjbect.put("Latitude", 47.9195645);
+
+            //weather
+
+
+            newEntry.put("System", infosObject);
+            newEntry.put("Data", textObject);
+            newEntry.put("Location", gpsOjbect);
+            newEntry.put("Weather", weatherOjbect);
+
+
+            Log.d("TextEditor", newEntry.toString());
+
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+
+        FileOutputStream outputStream;
+
+        try {
+            outputStream = getActivity().openFileOutput(fileName+".json", Context.MODE_PRIVATE);
+            outputStream.write(newEntry.toString().getBytes());
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Snackbar.make(getView(), "An error occured while saving the entry", Snackbar.LENGTH_LONG).setAction("Ok", null).show();
+        }
+
+    }
+
+
 }

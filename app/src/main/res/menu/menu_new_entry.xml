@@ -14,4 +14,10 @@
         android:title="Preview"
         android:orderInCategory="100"
         app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_cancel"
+        android:title="Cancel"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom"/>
 </menu>
