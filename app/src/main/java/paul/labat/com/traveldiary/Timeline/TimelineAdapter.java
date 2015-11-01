@@ -98,7 +98,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
                 public void onClick(View v) {
                     Intent intent = new Intent(context, TextEditorActivity.class);
                     intent.setAction("editEntry");
-                    intent.putExtra("FileName", v.getTag(R.string.tag_card_UUID).toString() + ".json");
+                    intent.putExtra("FileName", v.getTag(R.string.tag_card_UUID).toString());
                     ((Activity) context).startActivityForResult(intent, TextEditorActivity.CODE_FOR_NEW_ENTRY);
                 }
             });
@@ -116,7 +116,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             File dir = context.getFilesDir();
-                            File file = new File(dir, v.getTag(R.string.tag_card_UUID).toString()+".json");
+                            File file = new File(dir, v.getTag(R.string.tag_card_UUID).toString());
                             boolean res = file.delete();
                             Toast.makeText(context, "File deleted : "+res, Toast.LENGTH_SHORT).show();
                             entries.remove(getAdapterPosition());

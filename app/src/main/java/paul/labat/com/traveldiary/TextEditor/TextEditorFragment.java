@@ -1,6 +1,5 @@
 package paul.labat.com.traveldiary.TextEditor;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,17 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
-import org.json.JSONException;
-import org.json.JSONObject;
-import java.io.FileOutputStream;
-import java.util.Calendar;
-import java.util.TimeZone;
-import java.util.UUID;
+
 import paul.labat.com.traveldiary.R;
+import paul.labat.com.traveldiary.Util.DataModel;
+import paul.labat.com.traveldiary.Util.FileManager;
 
 public class TextEditorFragment extends Fragment {
 
     private EditText editText;
+    @Nullable
+    private String fileName;
 
     @Nullable
     @Override
@@ -33,6 +31,8 @@ public class TextEditorFragment extends Fragment {
         if(getArguments() != null && getArguments().getString("editText") != null) {
             editText.setText(getArguments().getString("editText"));
         }
+
+        fileName = getArguments() == null ? null : getArguments().getString("FileName");
         return view;
     }
 
@@ -47,7 +47,12 @@ public class TextEditorFragment extends Fragment {
 
         switch (item.getItemId()){
             case R.id.action_save:
-                saveEntry();
+
+                DataModel dataModel = new DataModel();
+                dataModel.setTextData(editText.getText().toString());
+
+                FileManager.getInstance().saveEntry(getActivity(), fileName, dataModel);
+
                 Toast.makeText(getContext(), "Saved", Toast.LENGTH_LONG).show();
                 getActivity().setResult(TextEditorActivity.CODE_FOR_NEW_ENTRY);
                 getActivity().finish();
@@ -65,60 +70,5 @@ public class TextEditorFragment extends Fragment {
 
         return super.onOptionsItemSelected(item);
     }
-
-
-    private void saveEntry(){
-        String fileName = UUID.randomUUID().toString();
-
-        JSONObject newEntry = new JSONObject();
-        JSONObject infosObject = new JSONObject();
-        JSONObject textObject = new JSONObject();
-        JSONObject gpsOjbect = new JSONObject();
-        JSONObject weatherOjbect = new JSONObject();
-        try {
-
-            //administrative
-            infosObject.put("FileName", fileName);
-            infosObject.put("TimeZone", Calendar.getInstance().getTimeZone());
-            infosObject.put("Date", Calendar.getInstance(TimeZone.getDefault()).getTimeInMillis());
-
-
-            //Text
-            textObject.put("Text", editText.getText());
-
-
-            //GPS position
-            gpsOjbect.put("Country","France");
-            gpsOjbect.put("City", "Orlean");
-            gpsOjbect.put("Street", "5 Rue du Maréchal de Lattre de Tassigny");
-            gpsOjbect.put("Longitude", 1.8951917);
-            gpsOjbect.put("Latitude", 47.9195645);
-
-            //weather
-
-
-            newEntry.put("System", infosObject);
-            newEntry.put("Data", textObject);
-            newEntry.put("Location", gpsOjbect);
-            newEntry.put("Weather", weatherOjbect);
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        FileOutputStream outputStream;
-
-        try {
-            outputStream = getActivity().openFileOutput(fileName+".json", Context.MODE_PRIVATE);
-            outputStream.write(newEntry.toString().getBytes());
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(getContext(), "An error occured while saving the entry", Toast.LENGTH_LONG).show();
-        }
-
-    }
-
 
 }

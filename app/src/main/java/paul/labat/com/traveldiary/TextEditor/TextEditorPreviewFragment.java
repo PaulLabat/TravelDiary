@@ -26,6 +26,7 @@ import paul.labat.com.traveldiary.R;
 public class TextEditorPreviewFragment extends Fragment{
 
     private String rawString;
+    private String fileName;
 
     @Nullable
     @Override
@@ -38,11 +39,12 @@ public class TextEditorPreviewFragment extends Fragment{
             if( getArguments().getString("editText") != null) {
                 rawString = getArguments().getString("editText");
             }else if(getArguments().getString("FileName") != null){
+                fileName = getArguments().getString("FileName");
                 FileInputStream inputStream;
                 String tmp="";
 
                 try {
-                    inputStream = getContext().openFileInput(getArguments().getString("FileName"));
+                    inputStream = getContext().openFileInput(fileName);
                     BufferedReader br = new BufferedReader(new InputStreamReader(inputStream,"utf8"));
                     String str;
                     while ((str = br.readLine()) != null) {
@@ -66,8 +68,6 @@ public class TextEditorPreviewFragment extends Fragment{
                     try {
                         JSONObject dataObject = jsonObject.getJSONObject("Data");
                         rawString = dataObject.getString("Text");
-
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -105,6 +105,7 @@ public class TextEditorPreviewFragment extends Fragment{
 
                 Bundle bundle = new Bundle();
                 bundle.putString("editText", rawString);
+                bundle.putString("FileName", fileName);
                 Fragment fragment = new TextEditorFragment();
                 fragment.setArguments(bundle);
 
