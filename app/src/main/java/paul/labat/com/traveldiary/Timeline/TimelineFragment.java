@@ -1,5 +1,6 @@
 package paul.labat.com.traveldiary.Timeline;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -9,21 +10,26 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import paul.labat.com.traveldiary.R;
-import paul.labat.com.traveldiary.TextEditor.TextEditorFragment;
+import paul.labat.com.traveldiary.TextEditor.TextEditorActivity;
 
 
 public class TimelineFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
-    private RecyclerView.Adapter mAdapter;
+
+    private TimelineAdapter mAdapter;
+
+    @Nullable
+    public TimelineAdapter getmAdapter() {
+        return mAdapter;
+    }
 
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.timeline_layout, container, false);
         mRecyclerView = (RecyclerView)rootView.findViewById(R.id.view_timeline);
         mRecyclerView.setHasFixedSize(true);
@@ -36,11 +42,22 @@ public class TimelineFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_content, new TextEditorFragment()).commit();
+                Intent intent = new Intent(getContext(), TextEditorActivity.class);
+                intent.setAction("NewEntry");
+                startActivityForResult(intent, TextEditorActivity.CODE_FOR_NEW_ENTRY);
             }
         });
 
         return rootView;
 
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == TextEditorActivity.CODE_FOR_NEW_ENTRY){
+            mAdapter.newData();
+        }
+    }
+
 }

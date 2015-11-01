@@ -1,8 +1,13 @@
 package paul.labat.com.traveldiary.Timeline;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -30,20 +35,116 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import paul.labat.com.traveldiary.R;
+import paul.labat.com.traveldiary.TextEditor.TextEditorActivity;
+import paul.labat.com.traveldiary.TextEditor.TextEditorPreviewFragment;
 
 
 public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHolder> {
 
     private List<TimelineItem> entries;
-    Context context;
+    private Context context;
 
     public TimelineAdapter(Context context){
         super();
         this.context = context;
+        createCards();
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.timeline_item_layout, parent, false);
+        return new ViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        TimelineItem item = entries.get(position);
+        holder.summary.setText(item.getSummary());
+        holder.address.setText(item.getLocation());
+        holder.dayString.setText(item.getDayString());
+        holder.dayNumber.setText(item.getDayNumber());
+        holder.dayHour.setText(item.getDayHour());
+        holder.cardView.setTag(R.string.tag_card_UUID, item.getCardUUID());
+    }
+
+    @Override
+    public int getItemCount() {
+        return entries.size();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView dayNumber;
+        public TextView dayString;
+        public TextView dayHour;
+        public TextView summary;
+        public TextView address;
+        public CardView cardView;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            cardView = (CardView)itemView.findViewById(R.id.card_view);
+
+
+            dayHour =(TextView)itemView.findViewById(R.id.item_hour);
+            dayNumber =(TextView)itemView.findViewById(R.id.item_day_number);
+            dayString =(TextView)itemView.findViewById(R.id.item_day_string);
+
+            summary = (TextView)itemView.findViewById(R.id.item_summary);
+            address = (TextView)itemView.findViewById(R.id.item_address);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, TextEditorActivity.class);
+                    intent.setAction("editEntry");
+                    intent.putExtra("FileName", v.getTag(R.string.tag_card_UUID).toString() + ".json");
+                    ((Activity) context).startActivityForResult(intent, TextEditorActivity.CODE_FOR_NEW_ENTRY);
+                }
+            });
+
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(final View v) {
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+                    builder.setMessage("Suppression du fichier ?")
+                            .setTitle("Suppression");
+
+                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            File dir = context.getFilesDir();
+                            File file = new File(dir, v.getTag(R.string.tag_card_UUID).toString()+".json");
+                            boolean res = file.delete();
+                            Toast.makeText(context, "File deleted : "+res, Toast.LENGTH_SHORT).show();
+                            entries.remove(getAdapterPosition());
+                            notifyItemRemoved(getAdapterPosition());
+                        }
+                    });
+
+                    builder.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    builder.create().show();
+
+                    return true;
+                }
+            });
+
+
+        }
+    }
+
+
+    private void createCards(){
         entries = new LinkedList<>();
         TimelineItem item;
         for(String name : context.fileList()){
-            Log.d("TextEditor", "open file : "+name);
             item = new TimelineItem();
             FileInputStream inputStream;
             String tmp="";
@@ -94,7 +195,6 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
                     sdf = new SimpleDateFormat("d");
                     item.setDayNumber(sdf.format(date));
 
-                    Log.d("UUID", dataObject.getString("FileName"));
                     item.setCardUUID(dataObject.getString("FileName"));
 
 
@@ -107,91 +207,11 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
         }
     }
 
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.timeline_item_layout, parent, false);
-        return new ViewHolder(view);
+
+    public void newData(){
+        createCards();
+        notifyDataSetChanged();
     }
 
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        TimelineItem item = entries.get(position);
-        holder.summary.setText(item.getSummary());
-        holder.address.setText(item.getLocation());
-        holder.dayString.setText(item.getDayString());
-        holder.dayNumber.setText(item.getDayNumber());
-        holder.dayHour.setText(item.getDayHour());
-        holder.cardView.setTag(R.string.tag_card_UUID, item.getCardUUID());
 
-    }
-
-    @Override
-    public int getItemCount() {
-        return entries.size();
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-
-        public TextView dayNumber;
-        public TextView dayString;
-        public TextView dayHour;
-        public TextView summary;
-        public TextView address;
-        public CardView cardView;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            cardView = (CardView)itemView.findViewById(R.id.card_view);
-
-
-            dayHour =(TextView)itemView.findViewById(R.id.item_hour);
-            dayNumber =(TextView)itemView.findViewById(R.id.item_day_number);
-            dayString =(TextView)itemView.findViewById(R.id.item_day_string);
-
-            summary = (TextView)itemView.findViewById(R.id.item_summary);
-            address = (TextView)itemView.findViewById(R.id.item_address);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.d("onClick", v.getTag(R.string.tag_card_UUID).toString());
-                }
-            });
-
-
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(final View v) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-                    builder.setMessage("Suppression du fichier ?")
-                            .setTitle("Suppression");
-
-                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            File dir = context.getFilesDir();
-                            File file = new File(dir, v.getTag(R.string.tag_card_UUID).toString()+".json");
-                            boolean res = file.delete();
-                            Toast.makeText(context, "File deleted : "+res, Toast.LENGTH_SHORT).show();
-                            entries.remove(getAdapterPosition());
-                            notifyItemRemoved(getAdapterPosition());
-                        }
-                    });
-
-                    builder.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-                    builder.create().show();
-
-                    return true;
-                }
-            });
-
-
-        }
-    }
 }

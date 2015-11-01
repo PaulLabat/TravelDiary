@@ -10,6 +10,16 @@ public class TimelineItem {
     private String summary;
     private String cardUUID;
 
+    private String location;
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     public String getDayHour() {
         return dayHour;
     }

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,7 +19,6 @@ import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.UUID;
 import paul.labat.com.traveldiary.R;
-import paul.labat.com.traveldiary.Timeline.TimelineFragment;
 
 public class TextEditorFragment extends Fragment {
 
@@ -32,9 +30,9 @@ public class TextEditorFragment extends Fragment {
         View view = inflater.inflate(R.layout.text_editor_layout, container, false);
         setHasOptionsMenu(true);
         editText = (EditText)view.findViewById(R.id.edit_text_entry);
-        if(getArguments() != null)
+        if(getArguments() != null && getArguments().getString("editText") != null) {
             editText.setText(getArguments().getString("editText"));
-
+        }
         return view;
     }
 
@@ -51,7 +49,8 @@ public class TextEditorFragment extends Fragment {
             case R.id.action_save:
                 saveEntry();
                 Toast.makeText(getContext(), "Saved", Toast.LENGTH_LONG).show();
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_content, new TimelineFragment()).commit();
+                getActivity().setResult(TextEditorActivity.CODE_FOR_NEW_ENTRY);
+                getActivity().finish();
                 return true;
             case R.id.action_preview:
                 Fragment fragment = new TextEditorPreviewFragment();
@@ -60,7 +59,7 @@ public class TextEditorFragment extends Fragment {
                 fragment.setArguments(bundle);
 
 
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_content, fragment).commit();
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_content_editor, fragment).commit();
             default:
         }
 
@@ -103,7 +102,6 @@ public class TextEditorFragment extends Fragment {
             newEntry.put("Location", gpsOjbect);
             newEntry.put("Weather", weatherOjbect);
 
-            Log.d("TextEditor", newEntry.toString());
 
         } catch (JSONException e) {
             e.printStackTrace();

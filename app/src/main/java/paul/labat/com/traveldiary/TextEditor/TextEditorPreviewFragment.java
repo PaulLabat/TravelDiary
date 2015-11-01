@@ -1,10 +1,10 @@
 package paul.labat.com.traveldiary.TextEditor;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,12 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.commonsware.cwac.anddown.AndDown;
-
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import paul.labat.com.traveldiary.R;
@@ -32,16 +32,59 @@ public class TextEditorPreviewFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.text_editor_preview_layout, container, false);
         setHasOptionsMenu(true);
-
         TextView textView = (TextView)view.findViewById(R.id.markdow_textview);
-        rawString = getArguments().getString("editText");
 
-        AndDown converter = new AndDown();
+        if(getArguments() != null){
+            if( getArguments().getString("editText") != null) {
+                rawString = getArguments().getString("editText");
+            }else if(getArguments().getString("FileName") != null){
+                FileInputStream inputStream;
+                String tmp="";
 
-        String cooked = converter.markdownToHtml(rawString);
+                try {
+                    inputStream = getContext().openFileInput(getArguments().getString("FileName"));
+                    BufferedReader br = new BufferedReader(new InputStreamReader(inputStream,"utf8"));
+                    String str;
+                    while ((str = br.readLine()) != null) {
+                        tmp += str;
+                    }
+                    inputStream.close();
+                }catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-        CharSequence cs = Html.fromHtml(cooked);
-        textView.setText(cs);
+                JSONObject jsonObject;
+                try {
+                    jsonObject = new JSONObject(tmp);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e(getClass().getName(), "Could not parse json file: " + getArguments().getString("FileName"));
+                    jsonObject = null;
+                }
+
+                if(jsonObject != null){
+                    try {
+                        JSONObject dataObject = jsonObject.getJSONObject("Data");
+                        rawString = dataObject.getString("Text");
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        }
+
+
+        if (rawString != null){
+            AndDown converter = new AndDown();
+
+            String cooked = converter.markdownToHtml(rawString);
+
+            CharSequence cs = Html.fromHtml(cooked);
+            textView.setText(cs);
+        }
 
         return view;
     }
@@ -65,7 +108,7 @@ public class TextEditorPreviewFragment extends Fragment{
                 Fragment fragment = new TextEditorFragment();
                 fragment.setArguments(bundle);
 
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_content, fragment).commit();
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_content_editor, fragment).commit();
             default:
         }
 
