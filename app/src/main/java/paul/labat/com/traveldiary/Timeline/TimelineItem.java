@@ -8,7 +8,6 @@ public class TimelineItem {
     private String dayNumber;
     private String dayString;
     private String summary;
-    private String location;
     private String cardUUID;
 
     public String getDayHour() {
@@ -33,14 +32,6 @@ public class TimelineItem {
 
     public void setDayString(String dayString) {
         this.dayString = dayString;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
     }
 
     public String getSummary() {

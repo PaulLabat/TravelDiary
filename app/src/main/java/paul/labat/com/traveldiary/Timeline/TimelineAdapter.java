@@ -24,6 +24,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -39,7 +40,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
     public TimelineAdapter(Context context){
         super();
         this.context = context;
-        entries = new ArrayList<>();
+        entries = new LinkedList<>();
         TimelineItem item;
         for(String name : context.fileList()){
             Log.d("TextEditor", "open file : "+name);
@@ -121,7 +122,6 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
         holder.dayNumber.setText(item.getDayNumber());
         holder.dayHour.setText(item.getDayHour());
         holder.cardView.setTag(R.string.tag_card_UUID, item.getCardUUID());
-        holder.cardView.setTag(R.string.tag_card_position, position);
 
     }
 
@@ -154,7 +154,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d("onClick", v.getTag().toString());
+                    Log.d("onClick", v.getTag(R.string.tag_card_UUID).toString());
                 }
             });
 
@@ -174,8 +174,8 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
                             File file = new File(dir, v.getTag(R.string.tag_card_UUID).toString()+".json");
                             boolean res = file.delete();
                             Toast.makeText(context, "File deleted : "+res, Toast.LENGTH_SHORT).show();
-                            entries.remove((int)Integer.valueOf(v.getTag(R.string.tag_card_position).toString()));
-                            notifyItemRemoved(Integer.valueOf(v.getTag(R.string.tag_card_position).toString()));
+                            entries.remove(getAdapterPosition());
+                            notifyItemRemoved(getAdapterPosition());
                         }
                     });
 
