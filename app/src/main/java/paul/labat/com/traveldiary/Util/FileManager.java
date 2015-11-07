@@ -38,17 +38,17 @@ public class FileManager {
         JSONObject weatherOjbect = new JSONObject();
 
         if (fileName == null) {
-
+            fileName = UUID.randomUUID().toString();
             try {
 
                 //administrative
-                infosObject.put("FileName", UUID.randomUUID().toString());
+                infosObject.put("FileName", fileName);
                 infosObject.put("TimeZone", Calendar.getInstance().getTimeZone());
                 infosObject.put("Date", Calendar.getInstance(TimeZone.getDefault()).getTimeInMillis());
 
 
                 //Text
-                textObject.put("Text", dataModel.getTextData());
+                textObject.put("Text", dataModel.getTextData() == null ? "" : dataModel.getTextData());
 
 
                 //GPS position

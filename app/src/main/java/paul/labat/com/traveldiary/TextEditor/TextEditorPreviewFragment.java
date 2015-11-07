@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.commonsware.cwac.anddown.AndDown;
@@ -22,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import paul.labat.com.traveldiary.R;
+import paul.labat.com.traveldiary.Util.DataModel;
+import paul.labat.com.traveldiary.Util.FileManager;
 
 public class TextEditorPreviewFragment extends Fragment{
 
@@ -33,7 +36,7 @@ public class TextEditorPreviewFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.text_editor_preview_layout, container, false);
         setHasOptionsMenu(true);
-        TextView textView = (TextView)view.findViewById(R.id.markdow_textview);
+        WebView textView = (WebView)view.findViewById(R.id.markdow_textview);
 
         if(getArguments() != null){
             if( getArguments().getString("editText") != null) {
@@ -82,8 +85,11 @@ public class TextEditorPreviewFragment extends Fragment{
 
             String cooked = converter.markdownToHtml(rawString);
 
-            CharSequence cs = Html.fromHtml(cooked);
-            textView.setText(cs);
+            /*CharSequence cs = Html.fromHtml(cooked);
+            textView.setText(cs);*/
+
+            textView.loadData(cooked, "text/html", "UTF-8");
+
         }
 
         return view;
@@ -99,7 +105,12 @@ public class TextEditorPreviewFragment extends Fragment{
 
         switch (item.getItemId()){
             case R.id.action_save_preview:
-                Toast.makeText(getContext(), "save action", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Saved", Toast.LENGTH_SHORT).show();
+                DataModel dataModel = new DataModel();
+                dataModel.setTextData(rawString);
+                FileManager.getInstance().saveEntry(getActivity(), fileName, dataModel);
+                getActivity().setResult(TextEditorActivity.CODE_FOR_NEW_ENTRY);
+                getActivity().finish();
                 return true;
             case R.id.action_edit:
 
