@@ -3,7 +3,6 @@ package paul.labat.com.traveldiary.TextEditor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -105,7 +104,7 @@ public class TextEditorFragment extends Fragment {
                 FileManager.getInstance().saveEntry(getActivity(), fileName, dataModel);
 
                 Toast.makeText(getContext(), "Saved", Toast.LENGTH_LONG).show();
-                getActivity().setResult(TextEditorActivity.CODE_FOR_NEW_ENTRY);
+                getActivity().setResult(TextEditorActivity.CODE_TIMELINE_DATA_CHANGED);
                 getActivity().finish();
                 return true;
             case R.id.action_preview:

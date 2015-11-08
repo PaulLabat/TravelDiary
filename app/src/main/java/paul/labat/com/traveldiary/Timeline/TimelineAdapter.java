@@ -5,9 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -27,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,7 +32,6 @@ import java.util.TimeZone;
 
 import paul.labat.com.traveldiary.R;
 import paul.labat.com.traveldiary.TextEditor.TextEditorActivity;
-import paul.labat.com.traveldiary.TextEditor.TextEditorPreviewFragment;
 
 
 public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHolder> {
@@ -99,7 +94,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
                     Intent intent = new Intent(context, TextEditorActivity.class);
                     intent.setAction("editEntry");
                     intent.putExtra("fileName", v.getTag(R.string.tag_card_UUID).toString());
-                    ((Activity) context).startActivityForResult(intent, TextEditorActivity.CODE_FOR_NEW_ENTRY);
+                    ((Activity) context).startActivityForResult(intent, TextEditorActivity.CODE_TIMELINE_DATA_CHANGED);
                 }
             });
 

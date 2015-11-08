@@ -3,7 +3,6 @@ package paul.labat.com.traveldiary.TextEditor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,12 +11,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.TextView;
 import android.widget.Toast;
 import com.commonsware.cwac.anddown.AndDown;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -116,7 +115,7 @@ public class TextEditorPreviewFragment extends Fragment{
                 DataModel dataModel = new DataModel();
                 dataModel.setTextData(rawString);
                 FileManager.getInstance().saveEntry(getActivity(), fileName, dataModel);
-                getActivity().setResult(TextEditorActivity.CODE_FOR_NEW_ENTRY);
+                getActivity().setResult(TextEditorActivity.CODE_TIMELINE_DATA_CHANGED);
                 getActivity().finish();
                 return true;
             case R.id.action_edit:
@@ -128,6 +127,16 @@ public class TextEditorPreviewFragment extends Fragment{
                 fragment.setArguments(bundle);
 
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_content_editor, fragment).commit();
+
+                return true;
+            case R.id.action_delete:
+                File dir = getContext().getFilesDir();
+                File file = new File(dir, fileName);
+                boolean res = file.delete();
+                Toast.makeText(getContext(), "File deleted : " + res, Toast.LENGTH_SHORT).show();
+                getActivity().setResult(TextEditorActivity.CODE_TIMELINE_DATA_CHANGED);
+                getActivity().finish();
+                return true;
             default:
         }
 

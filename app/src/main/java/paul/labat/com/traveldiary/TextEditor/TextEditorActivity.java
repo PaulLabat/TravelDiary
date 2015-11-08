@@ -10,7 +10,7 @@ import paul.labat.com.traveldiary.R;
 
 
 public class TextEditorActivity extends AppCompatActivity {
-public static int CODE_FOR_NEW_ENTRY = 42;
+public static int CODE_TIMELINE_DATA_CHANGED = 42;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

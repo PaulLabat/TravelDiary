@@ -44,7 +44,7 @@ public class TimelineFragment extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), TextEditorActivity.class);
                 intent.setAction("NewEntry");
-                startActivityForResult(intent, TextEditorActivity.CODE_FOR_NEW_ENTRY);
+                startActivityForResult(intent, TextEditorActivity.CODE_TIMELINE_DATA_CHANGED);
             }
         });
 
@@ -55,7 +55,7 @@ public class TimelineFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == TextEditorActivity.CODE_FOR_NEW_ENTRY){
+        if(resultCode == TextEditorActivity.CODE_TIMELINE_DATA_CHANGED){
             mAdapter.newData();
         }
     }
