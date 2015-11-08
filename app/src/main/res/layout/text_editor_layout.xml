@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -12,7 +11,75 @@
         android:layout_height="match_parent"
         android:inputType="textLongMessage|textAutoComplete|textMultiLine"
         android:gravity="top"
-        android:background="@android:color/transparent"/>
+        android:background="@android:color/transparent"
+        android:layout_above="@+id/control_layout" />
+
+    <!--<ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/control_layout">
+
+            <ImageButton
+                android:id="@+id/format_bold"
+                android:background="@android:color/transparent"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_format_bold_black_18dp"/>
+
+            <ImageButton
+                android:id="@+id/format_italic"
+                android:background="@android:color/transparent"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_format_italic_black_18dp"/>
+
+            <ImageButton
+                android:id="@+id/format_list_bulleted"
+                android:background="@android:color/transparent"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_format_list_bulleted_black_18dp"/>
 
 
-</LinearLayout>
+            <ImageButton
+                android:id="@+id/format_list_numered"
+                android:background="@android:color/transparent"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_format_list_numbered_black_18dp"/>
+
+            <ImageButton
+                android:id="@+id/format_add_photo"
+                android:background="@android:color/transparent"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_insert_photo_black_18dp"/>
+
+            <ImageButton
+                android:id="@+id/format_add_location"
+                android:background="@android:color/transparent"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_place_black_18dp"/>
+
+        </LinearLayout>
+
+
+
+    <!--</ScrollView>-->
+
+
+</RelativeLayout>

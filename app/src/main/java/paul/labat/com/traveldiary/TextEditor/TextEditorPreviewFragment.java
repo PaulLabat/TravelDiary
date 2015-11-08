@@ -39,43 +39,50 @@ public class TextEditorPreviewFragment extends Fragment{
         WebView textView = (WebView)view.findViewById(R.id.markdow_textview);
 
         if(getArguments() != null){
-            if( getArguments().getString("editText") != null) {
-                rawString = getArguments().getString("editText");
-            }else if(getArguments().getString("FileName") != null){
-                fileName = getArguments().getString("FileName");
-                FileInputStream inputStream;
-                String tmp="";
+            if(getArguments().getString("fileName") != null){
+                fileName = getArguments().getString("fileName");
 
-                try {
-                    inputStream = getContext().openFileInput(fileName);
-                    BufferedReader br = new BufferedReader(new InputStreamReader(inputStream,"utf8"));
-                    String str;
-                    while ((str = br.readLine()) != null) {
-                        tmp += str;
-                    }
-                    inputStream.close();
-                }catch (IOException e) {
-                    e.printStackTrace();
-                }
+                if( getArguments().getString("editText") != null) {
+                    rawString = getArguments().getString("editText");
+                }else {
+                    FileInputStream inputStream;
+                    String tmp = "";
 
-                JSONObject jsonObject;
-                try {
-                    jsonObject = new JSONObject(tmp);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.e(getClass().getName(), "Could not parse json file: " + getArguments().getString("FileName"));
-                    jsonObject = null;
-                }
-
-                if(jsonObject != null){
                     try {
-                        JSONObject dataObject = jsonObject.getJSONObject("Data");
-                        rawString = dataObject.getString("Text");
-                    } catch (JSONException e) {
+                        inputStream = getContext().openFileInput(fileName);
+                        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "utf8"));
+                        String str;
+                        while ((str = br.readLine()) != null) {
+                            tmp += str;
+                        }
+                        inputStream.close();
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
+
+                    JSONObject jsonObject;
+                    try {
+                        jsonObject = new JSONObject(tmp);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(getClass().getName(), "Could not parse json file: " + getArguments().getString("fileName"));
+                        jsonObject = null;
+                    }
+
+                    if (jsonObject != null) {
+                        try {
+                            JSONObject dataObject = jsonObject.getJSONObject("Data");
+                            rawString = dataObject.getString("Text");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
 
+            }else{
+                if( getArguments().getString("editText") != null) {
+                    rawString = getArguments().getString("editText");
+                }
             }
         }
 
@@ -116,7 +123,7 @@ public class TextEditorPreviewFragment extends Fragment{
 
                 Bundle bundle = new Bundle();
                 bundle.putString("editText", rawString);
-                bundle.putString("FileName", fileName);
+                bundle.putString("fileName", fileName);
                 Fragment fragment = new TextEditorFragment();
                 fragment.setArguments(bundle);
 

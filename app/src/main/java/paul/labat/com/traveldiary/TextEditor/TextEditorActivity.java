@@ -31,7 +31,7 @@ public static int CODE_FOR_NEW_ENTRY = 42;
             }else if(intent.getAction().equalsIgnoreCase("editEntry")){
                 fragment = new TextEditorPreviewFragment();
                 Bundle bundle = new Bundle();
-                bundle.putString("FileName", intent.getStringExtra("FileName"));
+                bundle.putString("fileName", intent.getStringExtra("fileName"));
                 fragment.setArguments(bundle);
             }else{
                 fragment = new TextEditorFragment();

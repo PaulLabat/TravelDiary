@@ -42,7 +42,7 @@ public class FileManager {
             try {
 
                 //administrative
-                infosObject.put("FileName", fileName);
+                infosObject.put("fileName", fileName);
                 infosObject.put("TimeZone", Calendar.getInstance().getTimeZone());
                 infosObject.put("Date", Calendar.getInstance(TimeZone.getDefault()).getTimeInMillis());
 
@@ -115,7 +115,7 @@ public class FileManager {
 
                     //administrative
                     JSONObject tmpObject = jsonObject.getJSONObject("System");
-                    infosObject.put("FileName", fileName);
+                    infosObject.put("fileName", fileName);
                     infosObject.put("TimeZone", tmpObject.getString("TimeZone"));
                     infosObject.put("Date", tmpObject.getLong("Date"));
 

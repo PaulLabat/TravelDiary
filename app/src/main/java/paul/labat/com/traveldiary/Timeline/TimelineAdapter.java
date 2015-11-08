@@ -98,7 +98,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
                 public void onClick(View v) {
                     Intent intent = new Intent(context, TextEditorActivity.class);
                     intent.setAction("editEntry");
-                    intent.putExtra("FileName", v.getTag(R.string.tag_card_UUID).toString());
+                    intent.putExtra("fileName", v.getTag(R.string.tag_card_UUID).toString());
                     ((Activity) context).startActivityForResult(intent, TextEditorActivity.CODE_FOR_NEW_ENTRY);
                 }
             });
@@ -195,7 +195,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
                     sdf = new SimpleDateFormat("d");
                     item.setDayNumber(sdf.format(date));
 
-                    item.setCardUUID(dataObject.getString("FileName"));
+                    item.setCardUUID(dataObject.getString("fileName"));
 
 
                 } catch (JSONException e) {
