@@ -4,82 +4,96 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-    <EditText
-        android:id="@+id/edit_text_entry"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:inputType="textLongMessage|textAutoComplete|textMultiLine"
-        android:gravity="top"
-        android:background="@android:color/transparent"
-        android:layout_above="@+id/control_layout" />
+        android:layout_above="@+id/control_layout"
+        android:fillViewport="true">
 
-    <!--<ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
--->
-        <LinearLayout
+        <EditText
+            android:id="@+id/edit_text_entry"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="10dp"
-            android:id="@+id/control_layout">
+            android:inputType="textLongMessage|textAutoComplete|textMultiLine"
+            android:gravity="top"
+            android:background="@android:color/transparent"/>
+    </ScrollView>
+
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:scrollbars="none"
+        android:id="@+id/control_layout"
+        android:layout_marginBottom="@dimen/menu_margin_bottom">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
             <ImageButton
                 android:id="@+id/format_bold"
                 android:background="@android:color/transparent"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_format_bold_black_18dp"/>
+                android:layout_width="@dimen/menu_icon_size"
+                android:layout_height="@dimen/menu_icon_size"
+                android:layout_marginLeft="@dimen/menu_margin"
+                android:layout_marginStart="@dimen/menu_margin"
+                android:src="@drawable/ic_format_bold_black_18dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
 
             <ImageButton
+                android:layout_toRightOf="@+id/format_bold"
+                android:layout_toEndOf="@+id/format_bold"
                 android:id="@+id/format_italic"
                 android:background="@android:color/transparent"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_weight="1"
+                android:layout_width="@dimen/menu_icon_size"
+                android:layout_height="@dimen/menu_icon_size"
+                android:layout_marginLeft="@dimen/menu_margin"
+                android:layout_marginStart="@dimen/menu_margin"
                 android:src="@drawable/ic_format_italic_black_18dp"/>
 
             <ImageButton
+                android:layout_toRightOf="@+id/format_italic"
+                android:layout_toEndOf="@+id/format_italic"
                 android:id="@+id/format_list_bulleted"
                 android:background="@android:color/transparent"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_weight="1"
+                android:layout_width="@dimen/menu_icon_size"
+                android:layout_height="@dimen/menu_icon_size"
+                android:layout_marginLeft="@dimen/menu_margin"
+                android:layout_marginStart="@dimen/menu_margin"
                 android:src="@drawable/ic_format_list_bulleted_black_18dp"/>
 
 
             <ImageButton
-                android:id="@+id/format_list_numered"
-                android:background="@android:color/transparent"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_format_list_numbered_black_18dp"/>
-
-            <ImageButton
+                android:layout_toRightOf="@+id/format_list_bulleted"
+                android:layout_toEndOf="@+id/format_list_bulleted"
                 android:id="@+id/format_add_photo"
                 android:background="@android:color/transparent"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_weight="1"
+                android:layout_width="@dimen/menu_icon_size"
+                android:layout_height="@dimen/menu_icon_size"
+                android:layout_marginLeft="@dimen/menu_margin"
+                android:layout_marginStart="@dimen/menu_margin"
                 android:src="@drawable/ic_insert_photo_black_18dp"/>
 
             <ImageButton
+                android:layout_toRightOf="@+id/format_add_photo"
+                android:layout_toEndOf="@+id/format_add_photo"
                 android:id="@+id/format_add_location"
                 android:background="@android:color/transparent"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_weight="1"
+                android:layout_width="@dimen/menu_icon_size"
+                android:layout_height="@dimen/menu_icon_size"
+                android:layout_marginLeft="@dimen/menu_margin"
+                android:layout_marginStart="@dimen/menu_margin"
+                android:layout_marginRight="@dimen/menu_margin"
+                android:layout_marginEnd="@dimen/menu_margin"
                 android:src="@drawable/ic_place_black_18dp"/>
 
-        </LinearLayout>
+        </RelativeLayout>
+
+    </HorizontalScrollView>
 
 
-
-    <!--</ScrollView>-->
 
 
 </RelativeLayout>

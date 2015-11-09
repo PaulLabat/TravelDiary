@@ -20,7 +20,7 @@ import paul.labat.com.traveldiary.Util.FileManager;
 public class TextEditorFragment extends Fragment {
 
     private EditText editText;
-    private ImageButton formatBold, formatItalic, formatListBulleted, formatListNumered, formatAddPhoto, formatAddLocation;
+    private ImageButton formatBold, formatItalic, formatListBulleted, formatAddPhoto, formatAddLocation;
 
 
     @Nullable
@@ -42,44 +42,29 @@ public class TextEditorFragment extends Fragment {
         formatBold = (ImageButton)view.findViewById(R.id.format_bold);
         formatItalic = (ImageButton)view.findViewById(R.id.format_italic);
         formatListBulleted = (ImageButton)view.findViewById(R.id.format_list_bulleted);
-        formatListNumered = (ImageButton)view.findViewById(R.id.format_list_numered);
         formatAddPhoto = (ImageButton)view.findViewById(R.id.format_add_photo);
         formatAddLocation = (ImageButton)view.findViewById(R.id.format_add_location);
 
         formatBold.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String s = editText.getText()+ " ** ";
-                editText.setText(s);
-                editText.setSelection(editText.getText().length() - 2);
-
+                editText.getText().insert(editText.getSelectionStart(), " **** ");
+                editText.setSelection(editText.getSelectionStart() - 3);
             }
         });
 
         formatItalic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String s = editText.getText()+ " **** ";
-                editText.setText(s);
-                editText.setSelection(editText.getText().length() - 3);
+                editText.getText().insert(editText.getSelectionStart(), " ** ");
+                editText.setSelection(editText.getSelectionStart() - 2);
             }
         });
 
         formatListBulleted.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String s = editText.getText()+ "- ";
-                editText.setText(s);
-                editText.setSelection(editText.getText().length());
-            }
-        });
-
-        formatListNumered.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String s = editText.getText()+ "1. ";
-                editText.setText(s);
-                editText.setSelection(editText.getText().length());
+                editText.getText().insert(editText.getSelectionStart(), "- ");
             }
         });
 
