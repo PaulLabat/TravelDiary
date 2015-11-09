@@ -3,21 +3,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
+
+    <item
+        android:title="Date picker"
+        android:icon="@android:drawable/ic_menu_day"
+        android:id="@+id/action_choose_date"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom"
+        />
     <item
         android:id="@+id/action_save"
         android:title="Save"
         android:orderInCategory="100"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_preview"
         android:title="Preview"
         android:orderInCategory="100"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_cancel"
         android:title="Cancel"
         android:orderInCategory="100"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="never"/>
 </menu>

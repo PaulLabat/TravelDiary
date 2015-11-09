@@ -29,7 +29,7 @@ public class FileManager {
     private FileManager() {
     }
 
-    public void saveEntry(@NonNull Activity activity,@Nullable String fileName, @NonNull DataModel dataModel) {
+    public void saveEntry(@NonNull Activity activity,@Nullable String fileName, @NonNull DataModel dataModel, @NonNull DateTimeModel dateTimeModel) {
 
         JSONObject newEntry = new JSONObject();
         JSONObject infosObject = new JSONObject();
@@ -44,7 +44,12 @@ public class FileManager {
                 //administrative
                 infosObject.put("fileName", fileName);
                 infosObject.put("TimeZone", Calendar.getInstance().getTimeZone());
-                infosObject.put("Date", Calendar.getInstance(TimeZone.getDefault()).getTimeInMillis());
+                //infosObject.put("Date", Calendar.getInstance(TimeZone.getDefault()).getTimeInMillis());
+                infosObject.put("year", dateTimeModel.getYear());
+                infosObject.put("month", dateTimeModel.getMonth());
+                infosObject.put("day", dateTimeModel.getDay());
+                infosObject.put("hour", dateTimeModel.getHour());
+                infosObject.put("minute", dateTimeModel.getMinutes());
 
 
                 //Text
@@ -117,7 +122,12 @@ public class FileManager {
                     JSONObject tmpObject = jsonObject.getJSONObject("System");
                     infosObject.put("fileName", fileName);
                     infosObject.put("TimeZone", tmpObject.getString("TimeZone"));
-                    infosObject.put("Date", tmpObject.getLong("Date"));
+                    //infosObject.put("Date", tmpObject.getLong("Date"));
+                    infosObject.put("year", dateTimeModel.getYear());
+                    infosObject.put("month", dateTimeModel.getMonth());
+                    infosObject.put("day", dateTimeModel.getDay());
+                    infosObject.put("hour", dateTimeModel.getHour());
+                    infosObject.put("minute", dateTimeModel.getMinutes());
 
 
                     //Text
@@ -154,13 +164,7 @@ public class FileManager {
                     e.printStackTrace();
                     Toast.makeText(activity, "An error occured while saving the entry", Toast.LENGTH_LONG).show();
                 }
-
-
             }
-
-
         }
     }
-
-
 }

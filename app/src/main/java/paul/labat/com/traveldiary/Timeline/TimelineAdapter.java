@@ -23,7 +23,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -173,25 +175,14 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
 
                     dataObject = jsonObject.getJSONObject("System");
 
-                    Timestamp timeStamp = new Timestamp(dataObject.getLong("Date"));
-                    Date date = new Date(timeStamp.getTime());
-                    SimpleDateFormat sdf;
+                    item.setDayHour(dataObject.getInt("hour") + ":" + dataObject.getInt("minute"));
+                    item.setDayNumber(dataObject.getInt("day") + "");
 
-                    if(TimeZone.getTimeZone(dataObject.getString("TimeZone")).inDaylightTime(date)){
-                        sdf = new SimpleDateFormat("kk:mm");
-                        sdf.setTimeZone(TimeZone.getTimeZone(dataObject.getString("TimeZone")));
-                    }else{
-                        sdf = new SimpleDateFormat("kk:mm", Locale.getDefault());
-                    }
-
-                    item.setDayHour(sdf.format(date));
-                    sdf = new SimpleDateFormat("ccc");
-                    item.setDayString(sdf.format(date));
-                    sdf = new SimpleDateFormat("d");
-                    item.setDayNumber(sdf.format(date));
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.set(dataObject.getInt("year"), dataObject.getInt("month"), dataObject.getInt("day"), dataObject.getInt("hour"), dataObject.getInt("minute"));
+                    item.setDayString(new SimpleDateFormat("ccc", Locale.FRANCE).format(calendar.getTime()));
 
                     item.setCardUUID(dataObject.getString("fileName"));
-
 
                 } catch (JSONException e) {
                     e.printStackTrace();

@@ -23,12 +23,15 @@ import java.io.InputStreamReader;
 
 import paul.labat.com.traveldiary.R;
 import paul.labat.com.traveldiary.Util.DataModel;
+import paul.labat.com.traveldiary.Util.DateTimeModel;
 import paul.labat.com.traveldiary.Util.FileManager;
 
 public class TextEditorPreviewFragment extends Fragment{
 
     private String rawString;
     private String fileName;
+
+    private DateTimeModel dateTimeModel = new DateTimeModel();
 
     @Nullable
     @Override
@@ -38,6 +41,15 @@ public class TextEditorPreviewFragment extends Fragment{
         WebView textView = (WebView)view.findViewById(R.id.markdow_textview);
 
         if(getArguments() != null){
+            if(getArguments().getInt("year") != 0){
+                dateTimeModel.setYear(getArguments().getInt("year"));
+                dateTimeModel.setMonth(getArguments().getInt("month"));
+                dateTimeModel.setDay(getArguments().getInt("day"));
+                dateTimeModel.setHour(getArguments().getInt("hour"));
+                dateTimeModel.setMinutes(getArguments().getInt("minute"));
+            }
+
+
             if(getArguments().getString("fileName") != null){
                 fileName = getArguments().getString("fileName");
 
@@ -72,6 +84,12 @@ public class TextEditorPreviewFragment extends Fragment{
                         try {
                             JSONObject dataObject = jsonObject.getJSONObject("Data");
                             rawString = dataObject.getString("Text");
+                            dataObject = jsonObject.getJSONObject("System");
+                            dateTimeModel.setYear(dataObject.getInt("year"));
+                            dateTimeModel.setMonth(dataObject.getInt("month"));
+                            dateTimeModel.setDay(dataObject.getInt("day"));
+                            dateTimeModel.setHour(dataObject.getInt("hour"));
+                            dateTimeModel.setMinutes(dataObject.getInt("minute"));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -88,14 +106,8 @@ public class TextEditorPreviewFragment extends Fragment{
 
         if (rawString != null){
             AndDown converter = new AndDown();
-
             String cooked = converter.markdownToHtml(rawString);
-
-            /*CharSequence cs = Html.fromHtml(cooked);
-            textView.setText(cs);*/
-
             textView.loadData(cooked, "text/html", "UTF-8");
-
         }
 
         return view;
@@ -114,7 +126,7 @@ public class TextEditorPreviewFragment extends Fragment{
                 Toast.makeText(getContext(), "Saved", Toast.LENGTH_SHORT).show();
                 DataModel dataModel = new DataModel();
                 dataModel.setTextData(rawString);
-                FileManager.getInstance().saveEntry(getActivity(), fileName, dataModel);
+                FileManager.getInstance().saveEntry(getActivity(), fileName, dataModel, dateTimeModel);
                 getActivity().setResult(TextEditorActivity.CODE_TIMELINE_DATA_CHANGED);
                 getActivity().finish();
                 return true;
@@ -123,6 +135,11 @@ public class TextEditorPreviewFragment extends Fragment{
                 Bundle bundle = new Bundle();
                 bundle.putString("editText", rawString);
                 bundle.putString("fileName", fileName);
+                bundle.putInt("year", dateTimeModel.getYear());
+                bundle.putInt("month", dateTimeModel.getMonth());
+                bundle.putInt("day", dateTimeModel.getDay());
+                bundle.putInt("hour", dateTimeModel.getHour());
+                bundle.putInt("minute", dateTimeModel.getMinutes());
                 Fragment fragment = new TextEditorFragment();
                 fragment.setArguments(bundle);
 

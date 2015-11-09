@@ -1,20 +1,29 @@
 package paul.labat.com.traveldiary.TextEditor;
 
+import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TimePicker;
 import android.widget.Toast;
+
+import java.util.Calendar;
 
 import paul.labat.com.traveldiary.R;
 import paul.labat.com.traveldiary.Util.DataModel;
+import paul.labat.com.traveldiary.Util.DateTimeModel;
 import paul.labat.com.traveldiary.Util.FileManager;
 
 public class TextEditorFragment extends Fragment {
@@ -22,9 +31,13 @@ public class TextEditorFragment extends Fragment {
     private EditText editText;
     private ImageButton formatBold, formatItalic, formatListBulleted, formatAddPhoto, formatAddLocation;
 
+    private DatePickerDialog datePicker;
+    private TimePickerDialog timePicker;
 
     @Nullable
     private String fileName;
+
+    private DateTimeModel dateTimeModel = new DateTimeModel();
 
     @Nullable
     @Override
@@ -32,11 +45,26 @@ public class TextEditorFragment extends Fragment {
         View view = inflater.inflate(R.layout.text_editor_layout, container, false);
         setHasOptionsMenu(true);
         editText = (EditText)view.findViewById(R.id.edit_text_entry);
-        if(getArguments() != null && getArguments().getString("editText") != null) {
-            editText.setText(getArguments().getString("editText"));
-        }
 
-        fileName = getArguments() == null ? null : getArguments().getString("fileName");
+        
+        if(getArguments() != null){
+
+            if(getArguments().getString("fileName") != null){
+                fileName = getArguments().getString("fileName");
+            }
+
+            if(getArguments().getString("editText") != null) {
+                editText.setText(getArguments().getString("editText"));
+            }
+
+            if(getArguments().getInt("year") != 0){
+             dateTimeModel.setYear(getArguments().getInt("year"));
+             dateTimeModel.setMonth(getArguments().getInt("month"));
+             dateTimeModel.setDay(getArguments().getInt("day"));
+             dateTimeModel.setHour(getArguments().getInt("hour"));
+             dateTimeModel.setMinutes(getArguments().getInt("minute"));
+            }
+        }
 
 
         formatBold = (ImageButton)view.findViewById(R.id.format_bold);
@@ -83,10 +111,10 @@ public class TextEditorFragment extends Fragment {
         switch (item.getItemId()){
             case R.id.action_save:
 
-                DataModel dataModel = new DataModel();
+                final DataModel dataModel = new DataModel();
                 dataModel.setTextData(editText.getText().toString());
 
-                FileManager.getInstance().saveEntry(getActivity(), fileName, dataModel);
+                FileManager.getInstance().saveEntry(getActivity(), fileName, dataModel, dateTimeModel);
 
                 Toast.makeText(getContext(), "Saved", Toast.LENGTH_LONG).show();
                 getActivity().setResult(TextEditorActivity.CODE_TIMELINE_DATA_CHANGED);
@@ -97,10 +125,48 @@ public class TextEditorFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putString("editText", editText.getText().toString());
                 bundle.putString("fileName", fileName);
+                bundle.putInt("year", dateTimeModel.getYear());
+                bundle.putInt("month", dateTimeModel.getMonth());
+                bundle.putInt("day", dateTimeModel.getDay());
+                bundle.putInt("hour", dateTimeModel.getHour());
+                bundle.putInt("minute", dateTimeModel.getMinutes());
                 fragment.setArguments(bundle);
-
-
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_content_editor, fragment).commit();
+                return true;
+            case R.id.action_choose_date:
+                Calendar calendar = Calendar.getInstance();
+
+
+                timePicker = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        dateTimeModel.setHour(hourOfDay);
+                        dateTimeModel.setMinutes(minute);
+                    }
+                },dateTimeModel.getHour(), dateTimeModel.getMinutes(), true);
+
+                datePicker = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        dateTimeModel.setYear(year);
+                        dateTimeModel.setMonth(monthOfYear);
+                        dateTimeModel.setDay(dayOfMonth);
+                        timePicker.show();
+                    }
+                }, dateTimeModel.getYear(), dateTimeModel.getMonth(), dateTimeModel.getDay());
+
+
+
+                datePicker.show();
+
+
+
+                return true;
+
+
+            case R.id.action_cancel:
+                getActivity().setResult(Activity.RESULT_CANCELED);
+                getActivity().finish();
             default:
         }
 
