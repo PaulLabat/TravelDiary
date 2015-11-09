@@ -22,15 +22,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.sql.Timestamp;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import paul.labat.com.traveldiary.R;
 import paul.labat.com.traveldiary.TextEditor.TextEditorActivity;
@@ -38,7 +35,7 @@ import paul.labat.com.traveldiary.TextEditor.TextEditorActivity;
 
 public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHolder> {
 
-    private List<TimelineItem> entries;
+    private ArrayList<TimelineItem> entries;
     private Context context;
 
     public TimelineAdapter(Context context){
@@ -60,7 +57,8 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
         holder.address.setText(item.getLocation());
         holder.dayString.setText(item.getDayString());
         holder.dayNumber.setText(item.getDayNumber());
-        holder.dayHour.setText(item.getDayHour());
+        String s = item.getDayHour()+":"+item.getDayMinute();
+        holder.dayHour.setText(s);
         holder.cardView.setTag(R.string.tag_card_UUID, item.getCardUUID());
     }
 
@@ -139,7 +137,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
 
 
     private void createCards(){
-        entries = new LinkedList<>();
+        entries = new ArrayList<>();
         TimelineItem item;
         for(String name : context.fileList()){
             item = new TimelineItem();
@@ -175,8 +173,11 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
 
                     dataObject = jsonObject.getJSONObject("System");
 
-                    item.setDayHour(dataObject.getInt("hour") + ":" + dataObject.getInt("minute"));
+                    item.setDayHour(dataObject.getInt("hour") + "");
+                    item.setDayMinute(dataObject.getInt("minute") + "");
                     item.setDayNumber(dataObject.getInt("day") + "");
+                    item.setMonth(dataObject.getInt("month") + "");
+                    item.setYear(dataObject.getInt("year") + "");
 
                     Calendar calendar = Calendar.getInstance();
                     calendar.set(dataObject.getInt("year"), dataObject.getInt("month"), dataObject.getInt("day"), dataObject.getInt("hour"), dataObject.getInt("minute"));
@@ -191,6 +192,14 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
                 entries.add(item);
             }
         }
+
+        Collections.sort(entries, new Comparator<TimelineItem>() {
+            @Override
+            public int compare(TimelineItem lhs, TimelineItem rhs) {
+                return - lhs.getDate().compareTo(rhs.getDate());
+            }
+        });
+
     }
 
 
