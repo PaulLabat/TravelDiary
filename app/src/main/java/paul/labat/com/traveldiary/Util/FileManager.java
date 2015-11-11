@@ -29,7 +29,8 @@ public class FileManager {
     private FileManager() {
     }
 
-    public void saveEntry(@NonNull Activity activity,@Nullable String fileName, @NonNull DataModel dataModel, @NonNull DateTimeModel dateTimeModel) {
+    public void saveEntry(@NonNull Activity activity,@Nullable String fileName, @NonNull DataModel dataModel,
+                          @NonNull DateTimeModel dateTimeModel, @NonNull LocationModel locationModel) {
 
         JSONObject newEntry = new JSONObject();
         JSONObject infosObject = new JSONObject();
@@ -44,7 +45,6 @@ public class FileManager {
                 //administrative
                 infosObject.put("fileName", fileName);
                 infosObject.put("TimeZone", Calendar.getInstance().getTimeZone());
-                //infosObject.put("Date", Calendar.getInstance(TimeZone.getDefault()).getTimeInMillis());
                 infosObject.put("year", dateTimeModel.getYear());
                 infosObject.put("month", dateTimeModel.getMonth());
                 infosObject.put("day", dateTimeModel.getDay());
@@ -57,12 +57,13 @@ public class FileManager {
 
 
                 //GPS position
-                gpsOjbect.put("Country", "France");
-                gpsOjbect.put("City", "Orlean");
-                gpsOjbect.put("Street", "5 Rue du Maréchal de Lattre de Tassigny");
-                gpsOjbect.put("Longitude", 1.8951917);
-                gpsOjbect.put("Latitude", 47.9195645);
-
+                if(locationModel.getLocation() != null) {
+                    gpsOjbect.put("Country", locationModel.getCountryName());
+                    gpsOjbect.put("City", locationModel.getLocality());
+                    gpsOjbect.put("Street", locationModel.getStreet());
+                    gpsOjbect.put("Longitude", locationModel.getLocation().getLongitude());
+                    gpsOjbect.put("Latitude", locationModel.getLocation().getLatitude());
+                }
                 //weather
 
 

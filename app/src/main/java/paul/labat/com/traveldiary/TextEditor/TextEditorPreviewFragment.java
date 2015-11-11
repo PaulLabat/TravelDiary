@@ -25,6 +25,7 @@ import paul.labat.com.traveldiary.R;
 import paul.labat.com.traveldiary.Util.DataModel;
 import paul.labat.com.traveldiary.Util.DateTimeModel;
 import paul.labat.com.traveldiary.Util.FileManager;
+import paul.labat.com.traveldiary.Util.LocationModel;
 
 public class TextEditorPreviewFragment extends Fragment{
 
@@ -126,7 +127,7 @@ public class TextEditorPreviewFragment extends Fragment{
                 Toast.makeText(getContext(), "Saved", Toast.LENGTH_SHORT).show();
                 DataModel dataModel = new DataModel();
                 dataModel.setTextData(rawString);
-                FileManager.getInstance().saveEntry(getActivity(), fileName, dataModel, dateTimeModel);
+                FileManager.getInstance().saveEntry(getActivity(), fileName, dataModel, dateTimeModel, new LocationModel());
                 getActivity().setResult(TextEditorActivity.CODE_TIMELINE_DATA_CHANGED);
                 getActivity().finish();
                 return true;

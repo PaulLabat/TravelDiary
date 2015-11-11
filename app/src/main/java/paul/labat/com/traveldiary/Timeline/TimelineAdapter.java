@@ -185,6 +185,11 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
 
                     item.setCardUUID(dataObject.getString("fileName"));
 
+                    dataObject = jsonObject.getJSONObject("Location");
+                    item.setLocation(dataObject.getString("Street") + " "+ dataObject.getString("City"));
+
+
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
